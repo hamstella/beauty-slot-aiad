@@ -105,15 +105,13 @@ beauty-salon-reservation/
 │   │   └── config/         # 設定
 │   ├── go.mod
 │   └── Dockerfile
-├── shared/                   # 共通仕様・スクリプト
-│   ├── api-spec/            # OpenAPI仕様
-│   └── scripts/            # 開発スクリプト
 ├── database/                 # DB関連
 │   └── migrations/         # マイグレーションSQL
 ├── docs/                     # ドキュメント
 │   ├── REQUIREMENTS.md     # 要件定義
-│   ├── data-model.md       # データモデル
-│   └── database-schema.md  # DB設計書
+│   └── data/               # データ設計
+│       ├── data-model.md   # データモデル
+│       └── database-schema.md # DB設計書
 ├── docker-compose.yml       # 開発環境定義
 └── Makefile                 # 開発コマンド
 ```
@@ -121,7 +119,7 @@ beauty-salon-reservation/
 ## 🗄️ データベース
 
 ### ER図
-詳細は [docs/data-model.md](docs/data-model.md) を参照
+詳細は [docs/data/data-model.md](docs/data/data-model.md) を参照
 
 ### 主要テーブル
 - `customers` - 顧客情報
