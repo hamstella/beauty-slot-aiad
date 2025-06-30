@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Home Screen -->
+        <div class="screen" id="home-screen">
+            <header class="header">
+                <h1>予約一覧</h1>
+            </header>
+            
+            <main class="main-content">
+                <div class="recent-bookings">
+                    <div class="booking-card" data-rebook="true">
+                        <div class="booking-info">
+                            <h3>カット + カラー</h3>
+                            <p>タナカスタイリスト</p>
+                            <p>2024年6月28日 14:00</p>
+                        </div>
+                        <div class="booking-action">
+                            <button class="rebook-btn">再予約</button>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-card" data-rebook="true">
+                        <div class="booking-info">
+                            <h3>パーマ</h3>
+                            <p>サトウスタイリスト</p>
+                            <p>2024年6月15日 10:30</p>
+                        </div>
+                        <div class="booking-action">
+                            <button class="rebook-btn">再予約</button>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-card" data-rebook="true">
+                        <div class="booking-info">
+                            <h3>カット</h3>
+                            <p>ヤマダスタイリスト</p>
+                            <p>2024年6月1日 16:00</p>
+                        </div>
+                        <div class="booking-action">
+                            <button class="rebook-btn">再予約</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <button class="fab" id="new-booking-fab">
+                <span class="fab-icon">+</span>
+            </button>
+        </div>
+
+        <!-- Service Select Bottom Sheet -->
+        <div class="bottom-sheet" id="service-sheet">
+            <div class="sheet-header">
+                <h2>サービス選択</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="sheet-content">
+                <div class="service-grid">
+                    <div class="service-card" data-service="cut" data-duration="60" data-price="3500">
+                        <div class="service-icon">✂️</div>
+                        <h3>カット</h3>
+                        <p>60分 ¥3,500</p>
+                    </div>
+                    <div class="service-card" data-service="color" data-duration="90" data-price="6000">
+                        <div class="service-icon">🎨</div>
+                        <h3>カラー</h3>
+                        <p>90分 ¥6,000</p>
+                    </div>
+                    <div class="service-card" data-service="perm" data-duration="120" data-price="8000">
+                        <div class="service-icon">🌀</div>
+                        <h3>パーマ</h3>
+                        <p>120分 ¥8,000</p>
+                    </div>
+                    <div class="service-card" data-service="cut-color" data-duration="150" data-price="9000">
+                        <div class="service-icon">✨</div>
+                        <h3>カット + カラー</h3>
+                        <p>150分 ¥9,000</p>
+                    </div>
+                    <div class="service-card" data-service="treatment" data-duration="45" data-price="4000">
+                        <div class="service-icon">💆</div>
+                        <h3>トリートメント</h3>
+                        <p>45分 ¥4,000</p>
+                    </div>
+                    <div class="service-card" data-service="head-spa" data-duration="60" data-price="5000">
+                        <div class="service-icon">🧴</div>
+                        <h3>ヘッドスパ</h3>
+                        <p>60分 ¥5,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date & Time Bottom Sheet -->
+        <div class="bottom-sheet" id="datetime-sheet">
+            <div class="sheet-header">
+                <h2>日時選択</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="sheet-content">
+                <div class="date-selector">
+                    <div class="date-scroll">
+                        <div class="date-card active" data-date="2024-07-01">
+                            <div class="date-day">月</div>
+                            <div class="date-num">1</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-02">
+                            <div class="date-day">火</div>
+                            <div class="date-num">2</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-03">
+                            <div class="date-day">水</div>
+                            <div class="date-num">3</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-04">
+                            <div class="date-day">木</div>
+                            <div class="date-num">4</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-05">
+                            <div class="date-day">金</div>
+                            <div class="date-num">5</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-06">
+                            <div class="date-day">土</div>
+                            <div class="date-num">6</div>
+                        </div>
+                        <div class="date-card" data-date="2024-07-07">
+                            <div class="date-day">日</div>
+                            <div class="date-num">7</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="time-filters">
+                    <button class="filter-chip active" data-filter="all">すべて</button>
+                    <button class="filter-chip" data-filter="morning">午前</button>
+                    <button class="filter-chip" data-filter="afternoon">午後</button>
+                    <button class="filter-chip" data-filter="evening">夕方</button>
+                </div>
+                
+                <div class="time-slots">
+                    <button class="time-chip" data-time="09:00">9:00</button>
+                    <button class="time-chip" data-time="09:30">9:30</button>
+                    <button class="time-chip" data-time="10:00">10:00</button>
+                    <button class="time-chip" data-time="10:30">10:30</button>
+                    <button class="time-chip" data-time="11:00">11:00</button>
+                    <button class="time-chip" data-time="11:30">11:30</button>
+                    <button class="time-chip" data-time="13:00">13:00</button>
+                    <button class="time-chip" data-time="13:30">13:30</button>
+                    <button class="time-chip" data-time="14:00">14:00</button>
+                    <button class="time-chip" data-time="14:30">14:30</button>
+                    <button class="time-chip" data-time="15:00">15:00</button>
+                    <button class="time-chip" data-time="15:30">15:30</button>
+                    <button class="time-chip" data-time="16:00">16:00</button>
+                    <button class="time-chip" data-time="16:30">16:30</button>
+                    <button class="time-chip" data-time="17:00">17:00</button>
+                    <button class="time-chip" data-time="17:30">17:30</button>
+                    <button class="time-chip" data-time="18:00">18:00</button>
+                    <button class="time-chip" data-time="18:30">18:30</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stylist Selection Bottom Sheet -->
+        <div class="bottom-sheet" id="stylist-sheet">
+            <div class="sheet-header">
+                <h2>スタイリスト選択</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="sheet-content">
+                <div class="stylist-shortcuts">
+                    <button class="shortcut-btn" data-stylist="none">指名なし</button>
+                    <button class="shortcut-btn" data-stylist="same">前回と同じ</button>
+                </div>
+                
+                <div class="stylist-list">
+                    <div class="stylist-card" data-stylist="tanaka" data-fee="0">
+                        <div class="stylist-info">
+                            <h3>タナカ 美容師</h3>
+                            <div class="rating">★★★★★ 4.8</div>
+                            <p>カット・カラー専門</p>
+                        </div>
+                        <div class="stylist-fee">指名料なし</div>
+                    </div>
+                    
+                    <div class="stylist-card" data-stylist="sato" data-fee="500">
+                        <div class="stylist-info">
+                            <h3>サトウ 美容師</h3>
+                            <div class="rating">★★★★★ 4.9</div>
+                            <p>パーマ・トリートメント専門</p>
+                        </div>
+                        <div class="stylist-fee">+¥500</div>
+                    </div>
+                    
+                    <div class="stylist-card" data-stylist="yamada" data-fee="1000">
+                        <div class="stylist-info">
+                            <h3>ヤマダ 美容師</h3>
+                            <div class="rating">★★★★★ 5.0</div>
+                            <p>カット・カラー・パーマ</p>
+                        </div>
+                        <div class="stylist-fee">+¥1,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Bottom Sheet -->
+        <div class="bottom-sheet" id="confirm-sheet">
+            <div class="sheet-header">
+                <h2>予約確認</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="sheet-content">
+                <div class="booking-summary">
+                    <div class="summary-item">
+                        <span class="label">サービス</span>
+                        <span class="value" id="confirm-service">カット</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">日時</span>
+                        <span class="value" id="confirm-datetime">2024年7月1日 9:00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">スタイリスト</span>
+                        <span class="value" id="confirm-stylist">タナカ 美容師</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span class="label">合計</span>
+                        <span class="value" id="confirm-total">¥3,500</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="edit-btn">編集</button>
+                    <button class="btn-primary" id="reserve-btn">予約する</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Dialog -->
+        <div class="dialog-overlay" id="success-dialog">
+            <div class="dialog">
+                <div class="dialog-content">
+                    <h2>予約完了！</h2>
+                    <p>予約が正常に完了しました。<br>確認メールをお送りします。</p>
+                    <button class="btn-primary" id="close-success">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

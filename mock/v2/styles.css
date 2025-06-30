@@ -1,0 +1,654 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.app {
+    max-width: 414px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: white;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Main Content */
+.main-content {
+    padding: 1rem;
+    padding-bottom: 80px;
+}
+
+/* Booking Cards */
+.recent-bookings {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.booking-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e9ecef;
+}
+
+.booking-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.booking-info p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.rebook-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-width: 80px;
+}
+
+.rebook-btn:hover {
+    background: #5a6fd8;
+}
+
+/* FAB (Floating Action Button) */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 100;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+.fab-icon {
+    display: block;
+    line-height: 1;
+}
+
+/* Bottom Sheets */
+.bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 1000;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.bottom-sheet.active {
+    transform: translateY(0);
+}
+
+.sheet-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sheet-header h2 {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: #f8f9fa;
+}
+
+.sheet-content {
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: calc(80vh - 80px);
+}
+
+/* Service Grid */
+.service-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.service-card:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.service-card.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.service-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-card p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.service-card.selected p {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Date Selector */
+.date-selector {
+    margin-bottom: 1.5rem;
+}
+
+.date-scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.date-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.date-card {
+    min-width: 60px;
+    height: 80px;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.date-card:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.date-card.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.date-day {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.date-num {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Time Filters */
+.time-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+}
+
+.filter-chip {
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.filter-chip:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.filter-chip.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* Time Slots */
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.5rem;
+}
+
+.time-chip {
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.time-chip:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.time-chip.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.time-chip:disabled {
+    background: #f8f9fa;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Stylist Selection */
+.stylist-shortcuts {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.shortcut-btn {
+    flex: 1;
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shortcut-btn:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.shortcut-btn.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.stylist-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stylist-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stylist-card:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.stylist-card.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.stylist-info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.rating {
+    font-size: 0.8rem;
+    color: #ff6b35;
+    margin-bottom: 0.25rem;
+}
+
+.stylist-card.selected .rating {
+    color: #ffeb3b;
+}
+
+.stylist-info p {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.stylist-card.selected .stylist-info p {
+    color: rgba(255,255,255,0.8);
+}
+
+.stylist-fee {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stylist-card.selected .stylist-fee {
+    color: white;
+}
+
+/* Booking Summary */
+.booking-summary {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+.label {
+    color: #666;
+}
+
+.value {
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.btn-primary, .btn-secondary {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+    background: #f8f9ff;
+}
+
+/* Dialog */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.dialog-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 1rem;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.dialog-overlay.active .dialog {
+    transform: scale(1);
+}
+
+.dialog h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.dialog p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 375px) {
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-slots {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Touch Optimizations */
+@media (hover: none) {
+    .service-card:hover,
+    .date-card:hover,
+    .filter-chip:hover,
+    .time-chip:hover,
+    .shortcut-btn:hover,
+    .stylist-card:hover {
+        border-color: #e9ecef;
+        background: white;
+    }
+    
+    .service-card.selected:hover,
+    .date-card.active:hover,
+    .filter-chip.active:hover,
+    .time-chip.selected:hover,
+    .shortcut-btn.selected:hover,
+    .stylist-card.selected:hover {
+        border-color: #667eea;
+        background: #667eea;
+    }
+}
+
+/* Safe Area Insets */
+.app {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Accessibility */
+.service-card:focus,
+.date-card:focus,
+.filter-chip:focus,
+.time-chip:focus,
+.shortcut-btn:focus,
+.stylist-card:focus,
+.btn-primary:focus,
+.btn-secondary:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Animation for better UX */
+.booking-card {
+    animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

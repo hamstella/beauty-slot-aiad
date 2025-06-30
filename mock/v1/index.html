@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美容室予約アプリ - モックアップ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f7;
+            overflow-x: hidden;
+        }
+        
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            height: 60px;
+            background: #007AFF;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .page {
+            display: none;
+            height: calc(100% - 104px);
+            overflow-y: auto;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 8px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 4px;
+            background: #E5E5EA;
+            border-radius: 2px;
+        }
+        
+        .step.active {
+            background: #007AFF;
+        }
+        
+        .step.completed {
+            background: #34C759;
+        }
+        
+        .menu-item, .option-item, .staff-item, .time-slot {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover, .option-item:hover, .staff-item:hover, .time-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .menu-item.selected, .option-item.selected, .staff-item.selected, .time-slot.selected {
+            border: 2px solid #007AFF;
+            background: #F0F8FF;
+        }
+        
+        .menu-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-meta {
+            color: #8E8E93;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .option-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #C7C7CC;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .checkbox.checked {
+            background: #007AFF;
+            border-color: #007AFF;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            font-size: 14px;
+        }
+        
+        .staff-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .staff-info {
+            flex: 1;
+        }
+        
+        .staff-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .staff-skills {
+            color: #8E8E93;
+            font-size: 12px;
+        }
+        
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .date-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        
+        .date-item.disabled {
+            background: #F2F2F7;
+            color: #C7C7CC;
+            cursor: not-allowed;
+        }
+        
+        .date-item.selected {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .time-slot {
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .time-slot.unavailable {
+            background: #F2F2F7;
+            color: #C7C7CC;
+            cursor: not-allowed;
+        }
+        
+        .continue-btn {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 335px;
+            height: 50px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .continue-btn:disabled {
+            background: #C7C7CC;
+            cursor: not-allowed;
+        }
+        
+        .continue-btn:hover:not(:disabled) {
+            background: #0056CC;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #F2F2F7;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .duration-info {
+            background: #F0F8FF;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: center;
+            color: #007AFF;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>🔋100%</span>
+            </div>
+            
+            <!-- メニュー選択画面 -->
+            <div class="page active" id="menu-page">
+                <div class="header">
+                    <span></span>
+                    <span>メニュー選択</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="step-indicator">
+                        <div class="step active"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="selectMenu('cut', 'カット', 30, 3000)">
+                        <div class="menu-title">カット</div>
+                        <div class="menu-meta">
+                            <span>30分</span>
+                            <span>¥3,000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="selectMenu('color', 'カラー', 120, 8000)">
+                        <div class="menu-title">カラー</div>
+                        <div class="menu-meta">
+                            <span>120分</span>
+                            <span>¥8,000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="selectMenu('perm', 'パーマ', 150, 12000)">
+                        <div class="menu-title">パーマ</div>
+                        <div class="menu-meta">
+                            <span>150分</span>
+                            <span>¥12,000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="selectMenu('cut-color', 'カット＋カラー', 150, 10000)">
+                        <div class="menu-title">カット＋カラー</div>
+                        <div class="menu-meta">
+                            <span>150分</span>
+                            <span>¥10,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- オプション選択画面 -->
+            <div class="page" id="option-page">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">&larr;</button>
+                    <span>オプション選択</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="step-indicator">
+                        <div class="step completed"></div>
+                        <div class="step active"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                    </div>
+                    
+                    <div class="duration-info" id="duration-info">
+                        現在の所要時間: <span id="total-duration">30分</span>
+                    </div>
+                    
+                    <div class="option-item" onclick="toggleOption('treatment', 'トリートメント', 30, 2000)">
+                        <div class="option-checkbox">
+                            <div class="checkbox" id="treatment-checkbox"></div>
+                            <div>
+                                <div class="menu-title">トリートメント</div>
+                                <div class="menu-meta">
+                                    <span>+30分</span>
+                                    <span>+¥2,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-item" onclick="toggleOption('head-spa', 'ヘッドスパ', 20, 1500)">
+                        <div class="option-checkbox">
+                            <div class="checkbox" id="head-spa-checkbox"></div>
+                            <div>
+                                <div class="menu-title">ヘッドスパ</div>
+                                <div class="menu-meta">
+                                    <span>+20分</span>
+                                    <span>+¥1,500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-item" onclick="toggleOption('eyebrow', '眉カット', 15, 800)">
+                        <div class="option-checkbox">
+                            <div class="checkbox" id="eyebrow-checkbox"></div>
+                            <div>
+                                <div class="menu-title">眉カット</div>
+                                <div class="menu-meta">
+                                    <span>+15分</span>
+                                    <span>+¥800</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="continue-btn" onclick="goToStaff()">スタッフ選択へ</button>
+            </div>
+            
+            <!-- スタッフ選択画面 -->
+            <div class="page" id="staff-page">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">&larr;</button>
+                    <span>スタッフ選択</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="step-indicator">
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step active"></div>
+                        <div class="step"></div>
+                        <div class="step"></div>
+                    </div>
+                    
+                    <div class="staff-item" onclick="selectStaff('tanaka')">
+                        <div style="display: flex; align-items: center;">
+                            <div class="staff-avatar">タ</div>
+                            <div class="staff-info">
+                                <div class="staff-name">タナカ ミカ</div>
+                                <div class="staff-skills">カット・カラー・パーマ</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="staff-item" onclick="selectStaff('sato')">
+                        <div style="display: flex; align-items: center;">
+                            <div class="staff-avatar" style="background: linear-gradient(45deg, #FF9A9E, #FECFEF);">サ</div>
+                            <div class="staff-info">
+                                <div class="staff-name">サトウ ハナコ</div>
+                                <div class="staff-skills">カット・カラー・トリートメント</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="staff-item" onclick="selectStaff('yamada')">
+                        <div style="display: flex; align-items: center;">
+                            <div class="staff-avatar" style="background: linear-gradient(45deg, #A8EDEA, #FED6E3);">ヤ</div>
+                            <div class="staff-info">
+                                <div class="staff-name">ヤマダ タロウ</div>
+                                <div class="staff-skills">メンズカット・眉カット</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="continue-btn" id="staff-continue-btn" disabled onclick="goToDate()">日付選択へ</button>
+            </div>
+            
+            <!-- 日付選択画面 -->
+            <div class="page" id="date-page">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">&larr;</button>
+                    <span>日付選択</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="step-indicator">
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step active"></div>
+                        <div class="step"></div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3>2025年1月</h3>
+                    </div>
+                    
+                    <div class="date-grid" id="date-grid">
+                        <!-- 日付は JavaScript で生成 -->
+                    </div>
+                </div>
+                <button class="continue-btn" id="date-continue-btn" disabled onclick="goToTime()">時間選択へ</button>
+            </div>
+            
+            <!-- 時間選択画面 -->
+            <div class="page" id="time-page">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">&larr;</button>
+                    <span>時間選択</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="step-indicator">
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step completed"></div>
+                        <div class="step active"></div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 id="selected-date-display"></h3>
+                    </div>
+                    
+                    <div class="time-grid" id="time-grid">
+                        <!-- 時間は JavaScript で生成 -->
+                    </div>
+                </div>
+                <button class="continue-btn" id="time-continue-btn" disabled onclick="goToConfirm()">予約確認へ</button>
+            </div>
+            
+            <!-- 確認画面 -->
+            <div class="page" id="confirm-page">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">&larr;</button>
+                    <span>予約確認</span>
+                    <span></span>
+                </div>
+                <div class="content">
+                    <div class="summary-card">
+                        <div class="summary-row">
+                            <span>メニュー</span>
+                            <span id="confirm-menu"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>オプション</span>
+                            <span id="confirm-options"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>スタッフ</span>
+                            <span id="confirm-staff"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>日時</span>
+                            <span id="confirm-datetime"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>所要時間</span>
+                            <span id="confirm-duration"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>合計金額</span>
+                            <span id="confirm-price"></span>
+                        </div>
+                    </div>
+                </div>
+                <button class="continue-btn" onclick="completeReservation()">予約を確定する</button>
+            </div>
+            
+            <!-- 完了画面 -->
+            <div class="page" id="complete-page">
+                <div class="header">
+                    <span></span>
+                    <span>予約完了</span>
+                    <span></span>
+                </div>
+                <div class="content" style="text-align: center; padding-top: 50px;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+                    <h2 style="margin-bottom: 20px; color: #34C759;">予約が完了しました！</h2>
+                    <p style="color: #8E8E93; margin-bottom: 40px;">
+                        予約確認メールを送信いたします。<br>
+                        当日はお時間に余裕を持ってお越しください。
+                    </p>
+                    <button class="continue-btn" onclick="resetApp()">新しい予約をする</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // アプリの状態管理
+        let appState = {
+            currentPage: 'menu-page',
+            selectedMenu: null,
+            selectedOptions: [],
+            selectedStaff: null,
+            selectedDate: null,
+            selectedTime: null,
+            totalDuration: 0,
+            totalPrice: 0
+        };
+
+        // ページ遷移
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            appState.currentPage = pageId;
+        }
+
+        function goBack() {
+            const pages = ['menu-page', 'option-page', 'staff-page', 'date-page', 'time-page', 'confirm-page'];
+            const currentIndex = pages.indexOf(appState.currentPage);
+            if (currentIndex > 0) {
+                showPage(pages[currentIndex - 1]);
+            }
+        }
+
+        // メニュー選択
+        function selectMenu(id, name, duration, price) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.target.closest('.menu-item').classList.add('selected');
+            
+            appState.selectedMenu = { id, name, duration, price };
+            appState.totalDuration = duration;
+            appState.totalPrice = price;
+            
+            setTimeout(() => {
+                showPage('option-page');
+                updateDurationInfo();
+            }, 300);
+        }
+
+        // オプション選択
+        function toggleOption(id, name, duration, price) {
+            const checkbox = document.getElementById(id + '-checkbox');
+            const existingIndex = appState.selectedOptions.findIndex(opt => opt.id === id);
+            
+            if (existingIndex === -1) {
+                // 追加
+                appState.selectedOptions.push({ id, name, duration, price });
+                checkbox.classList.add('checked');
+                appState.totalDuration += duration;
+                appState.totalPrice += price;
+            } else {
+                // 削除
+                const option = appState.selectedOptions[existingIndex];
+                appState.selectedOptions.splice(existingIndex, 1);
+                checkbox.classList.remove('checked');
+                appState.totalDuration -= option.duration;
+                appState.totalPrice -= option.price;
+            }
+            
+            updateDurationInfo();
+        }
+
+        function updateDurationInfo() {
+            document.getElementById('total-duration').textContent = appState.totalDuration + '分';
+        }
+
+        function goToStaff() {
+            showPage('staff-page');
+        }
+
+        // スタッフ選択
+        function selectStaff(id) {
+            document.querySelectorAll('.staff-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.target.closest('.staff-item').classList.add('selected');
+            
+            const staffNames = {
+                'tanaka': 'タナカ ミカ',
+                'sato': 'サトウ ハナコ',
+                'yamada': 'ヤマダ タロウ'
+            };
+            
+            appState.selectedStaff = { id, name: staffNames[id] };
+            document.getElementById('staff-continue-btn').disabled = false;
+        }
+
+        function goToDate() {
+            showPage('date-page');
+            generateDateGrid();
+        }
+
+        // 日付選択
+        function generateDateGrid() {
+            const grid = document.getElementById('date-grid');
+            grid.innerHTML = '';
+            
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            
+            // 曜日ヘッダー
+            const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            weekdays.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.style.fontWeight = 'bold';
+                dayHeader.style.color = '#8E8E93';
+                dayHeader.style.textAlign = 'center';
+                dayHeader.style.padding = '8px';
+                grid.appendChild(dayHeader);
+            });
+            
+            // 日付生成（明日から90日後まで）
+            for (let i = 1; i <= 90; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                const dateItem = document.createElement('div');
+                dateItem.className = 'date-item';
+                dateItem.textContent = date.getDate();
+                dateItem.onclick = () => selectDate(date);
+                
+                if (i <= 14) { // 最初の2週間だけ表示
+                    grid.appendChild(dateItem);
+                }
+            }
+        }
+
+        function selectDate(date) {
+            document.querySelectorAll('.date-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            appState.selectedDate = date;
+            document.getElementById('date-continue-btn').disabled = false;
+        }
+
+        function goToTime() {
+            showPage('time-page');
+            generateTimeGrid();
+            updateSelectedDateDisplay();
+        }
+
+        // 時間選択
+        function generateTimeGrid() {
+            const grid = document.getElementById('time-grid');
+            grid.innerHTML = '';
+            
+            const times = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
+                          '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+                          '16:00', '16:30', '17:00', '17:30'];
+            
+            times.forEach(time => {
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.textContent = time;
+                
+                // ランダムに一部を予約済みにする
+                if (Math.random() < 0.3) {
+                    timeSlot.classList.add('unavailable');
+                } else {
+                    timeSlot.onclick = () => selectTime(time);
+                }
+                
+                grid.appendChild(timeSlot);
+            });
+        }
+
+        function selectTime(time) {
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            appState.selectedTime = time;
+            document.getElementById('time-continue-btn').disabled = false;
+        }
+
+        function updateSelectedDateDisplay() {
+            const date = appState.selectedDate;
+            const formatted = `${date.getMonth() + 1}/${date.getDate()}(${['日','月','火','水','木','金','土'][date.getDay()]})`;
+            document.getElementById('selected-date-display').textContent = formatted;
+        }
+
+        function goToConfirm() {
+            showPage('confirm-page');
+            updateConfirmationDetails();
+        }
+
+        // 確認画面
+        function updateConfirmationDetails() {
+            document.getElementById('confirm-menu').textContent = appState.selectedMenu.name;
+            
+            const optionsText = appState.selectedOptions.length > 0 
+                ? appState.selectedOptions.map(opt => opt.name).join(', ')
+                : 'なし';
+            document.getElementById('confirm-options').textContent = optionsText;
+            
+            document.getElementById('confirm-staff').textContent = appState.selectedStaff.name;
+            
+            const date = appState.selectedDate;
+            const dateText = `${date.getMonth() + 1}/${date.getDate()}(${['日','月','火','水','木','金','土'][date.getDay()]}) ${appState.selectedTime}`;
+            document.getElementById('confirm-datetime').textContent = dateText;
+            
+            document.getElementById('confirm-duration').textContent = appState.totalDuration + '分';
+            document.getElementById('confirm-price').textContent = '¥' + appState.totalPrice.toLocaleString();
+        }
+
+        function completeReservation() {
+            showPage('complete-page');
+        }
+
+        function resetApp() {
+            // 状態をリセット
+            appState = {
+                currentPage: 'menu-page',
+                selectedMenu: null,
+                selectedOptions: [],
+                selectedStaff: null,
+                selectedDate: null,
+                selectedTime: null,
+                totalDuration: 0,
+                totalPrice: 0
+            };
+            
+            // UI をリセット
+            document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.checked').forEach(el => el.classList.remove('checked'));
+            document.querySelectorAll('.continue-btn').forEach(btn => btn.disabled = true);
+            
+            showPage('menu-page');
+        }
+    </script>
+</body>
+</html>
