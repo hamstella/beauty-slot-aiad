@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Beauty Salon DB",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "beauty_salon_reservation",
+      "Username": "postgres",
+      "SSLMode": "prefer",
+      "PassFile": "/tmp/pgpass"
+    }
+  }
+}
