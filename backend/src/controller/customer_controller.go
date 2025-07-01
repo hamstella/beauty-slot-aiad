@@ -20,14 +20,14 @@ func NewCustomerController(customerService *service.CustomerService) *CustomerCo
 }
 
 // GetCustomers godoc
-// @Summary Get all customers
-// @Description Get all customers with pagination
-// @Tags customers
+// @Summary 顧客一覧取得
+// @Description ページング付きで全顧客を取得します
+// @Tags 顧客管理
 // @Accept json
 // @Produce json
-// @Param page query int false "Page number" default(1)
-// @Param limit query int false "Page size" default(10)
-// @Success 200 {object} map[string]interface{}
+// @Param page query int false "ページ番号" default(1)
+// @Param limit query int false "ページサイズ" default(10)
+// @Success 200 {object} map[string]interface{} "顧客一覧"
 // @Router /customers [get]
 func (c *CustomerController) GetCustomers(ctx *fiber.Ctx) error {
 	page := ctx.QueryInt("page", 1)
@@ -51,13 +51,13 @@ func (c *CustomerController) GetCustomers(ctx *fiber.Ctx) error {
 }
 
 // GetCustomer godoc
-// @Summary Get customer by ID
-// @Description Get customer by ID
-// @Tags customers
+// @Summary 顧客詳細取得
+// @Description IDで指定した顧客の詳細情報を取得します
+// @Tags 顧客管理
 // @Accept json
 // @Produce json
-// @Param id path string true "Customer ID"
-// @Success 200 {object} model.Customer
+// @Param id path string true "顧客ID"
+// @Success 200 {object} model.Customer "顧客情報"
 // @Router /customers/{id} [get]
 func (c *CustomerController) GetCustomer(ctx *fiber.Ctx) error {
 	id, err := uuid.Parse(ctx.Params("id"))
@@ -78,13 +78,13 @@ func (c *CustomerController) GetCustomer(ctx *fiber.Ctx) error {
 }
 
 // CreateCustomer godoc
-// @Summary Create new customer
-// @Description Create new customer
-// @Tags customers
+// @Summary 顧客新規登録
+// @Description 新しい顧客を登録します
+// @Tags 顧客管理
 // @Accept json
 // @Produce json
-// @Param customer body model.Customer true "Customer data"
-// @Success 201 {object} model.Customer
+// @Param customer body model.Customer true "顧客データ"
+// @Success 201 {object} model.Customer "登録された顧客情報"
 // @Router /customers [post]
 func (c *CustomerController) CreateCustomer(ctx *fiber.Ctx) error {
 	var customer model.Customer
@@ -105,14 +105,14 @@ func (c *CustomerController) CreateCustomer(ctx *fiber.Ctx) error {
 }
 
 // UpdateCustomer godoc
-// @Summary Update customer
-// @Description Update customer by ID
-// @Tags customers
+// @Summary 顧客情報更新
+// @Description IDで指定した顧客の情報を更新します
+// @Tags 顧客管理
 // @Accept json
 // @Produce json
-// @Param id path string true "Customer ID"
-// @Param customer body model.Customer true "Customer data"
-// @Success 200 {object} model.Customer
+// @Param id path string true "顧客ID"
+// @Param customer body model.Customer true "更新する顧客データ"
+// @Success 200 {object} model.Customer "更新された顧客情報"
 // @Router /customers/{id} [put]
 func (c *CustomerController) UpdateCustomer(ctx *fiber.Ctx) error {
 	id, err := uuid.Parse(ctx.Params("id"))
@@ -141,13 +141,13 @@ func (c *CustomerController) UpdateCustomer(ctx *fiber.Ctx) error {
 }
 
 // DeleteCustomer godoc
-// @Summary Delete customer
-// @Description Delete customer by ID
-// @Tags customers
+// @Summary 顧客削除
+// @Description IDで指定した顧客を削除します
+// @Tags 顧客管理
 // @Accept json
 // @Produce json
-// @Param id path string true "Customer ID"
-// @Success 204
+// @Param id path string true "顧客ID"
+// @Success 204 "削除成功"
 // @Router /customers/{id} [delete]
 func (c *CustomerController) DeleteCustomer(ctx *fiber.Ctx) error {
 	id, err := uuid.Parse(ctx.Params("id"))

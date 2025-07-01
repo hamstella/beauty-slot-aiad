@@ -15,7 +15,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/migrations:/docker-entrypoint-initdb.d/
+      # Note: PostgreSQL init scripts from backend migrations will be run by Go migration tool
+      # - ./backend/src/database/migrations:/docker-entrypoint-initdb.d/
     command: 
       - postgres
       - -c

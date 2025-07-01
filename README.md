@@ -68,7 +68,7 @@ make dev
 ### アクセスURL
 - **フロントエンド**: http://localhost:3000
 - **バックエンドAPI**: http://localhost:8080
-- **API仕様書**: http://localhost:8080/swagger/
+- **API仕様書**: http://localhost:8080/v1/docs/
 - **データベース**: localhost:5432
 
 ## 🛠️ 開発コマンド
@@ -150,7 +150,7 @@ POST /api/v1/reservations
 GET /api/v1/availability?staff_id=xxx&date=2025-07-01&duration=60
 ```
 
-詳細なAPI仕様書は開発環境起動後に http://localhost:8080/swagger/ で確認できます。
+詳細なAPI仕様書は開発環境起動後に http://localhost:8080/v1/docs/ で確認できます。
 
 
 ## 🚢 デプロイ

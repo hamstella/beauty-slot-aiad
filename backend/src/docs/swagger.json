@@ -9,68 +9,12 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:3000",
+    "host": "localhost:8080",
     "basePath": "/v1",
     "paths": {
-        "/auth/forgot-password": {
-            "post": {
-                "description": "An email will be sent to reset password.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Forgot password",
-                "parameters": [
-                    {
-                        "description": "Request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/validation.ForgotPassword"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.ForgotPasswordResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/example.NotFound"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/google": {
+        "/availability": {
             "get": {
-                "description": "This route initiates the Google OAuth2 login flow. Please try this in your browser.",
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login with google",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.GoogleLoginResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/login": {
-            "post": {
+                "description": "予約可能な時間枠を取得します",
                 "consumes": [
                     "application/json"
                 ],
@@ -78,77 +22,51 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "空き時間検索"
                 ],
-                "summary": "Login",
+                "summary": "空き時間取得",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/validation.Login"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.LoginResponse"
-                        }
+                        "type": "string",
+                        "description": "日付 (YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
                     },
-                    "401": {
-                        "description": "Invalid email or password",
-                        "schema": {
-                            "$ref": "#/definitions/example.FailedLogin"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/logout": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Logout",
-                "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/example.RefreshToken"
-                        }
+                        "type": "integer",
+                        "description": "所要時間（分）",
+                        "name": "duration",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "スタッフID絞り込み",
+                        "name": "staff_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "メニューID（カンマ区切り）",
+                        "name": "menu_ids",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "空き時間一覧",
                         "schema": {
-                            "$ref": "#/definitions/example.LogoutResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/example.NotFound"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/auth/refresh-tokens": {
-            "post": {
+        "/customers": {
+            "get": {
+                "description": "ページング付きで全顧客を取得します",
                 "consumes": [
                     "application/json"
                 ],
@@ -156,38 +74,37 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "顧客管理"
                 ],
-                "summary": "Refresh auth tokens",
+                "summary": "顧客一覧取得",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/example.RefreshToken"
-                        }
+                        "type": "integer",
+                        "default": 1,
+                        "description": "ページ番号",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "ページサイズ",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "顧客一覧",
                         "schema": {
-                            "$ref": "#/definitions/example.RefreshTokenResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
-            }
-        },
-        "/auth/register": {
+            },
             "post": {
+                "description": "新しい顧客を登録します",
                 "consumes": [
                     "application/json"
                 ],
@@ -195,38 +112,33 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "顧客管理"
                 ],
-                "summary": "Register as user",
+                "summary": "顧客新規登録",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
+                        "description": "顧客データ",
+                        "name": "customer",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validation.Register"
+                            "$ref": "#/definitions/model.Customer"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "登録された顧客情報",
                         "schema": {
-                            "$ref": "#/definitions/example.RegisterResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Email already taken",
-                        "schema": {
-                            "$ref": "#/definitions/example.DuplicateEmail"
+                            "$ref": "#/definitions/model.Customer"
                         }
                     }
                 }
             }
         },
-        "/auth/reset-password": {
-            "post": {
+        "/customers/{id}": {
+            "get": {
+                "description": "IDで指定した顧客の詳細情報を取得します",
                 "consumes": [
                     "application/json"
                 ],
@@ -234,111 +146,97 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "顧客管理"
                 ],
-                "summary": "Reset password",
+                "summary": "顧客詳細取得",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The reset password token",
-                        "name": "token",
-                        "in": "query",
+                        "description": "顧客ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "顧客情報",
+                        "schema": {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "IDで指定した顧客の情報を更新します",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "顧客管理"
+                ],
+                "summary": "顧客情報更新",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "顧客ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Request body",
-                        "name": "request",
+                        "description": "更新する顧客データ",
+                        "name": "customer",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validation.UpdatePassOrVerify"
+                            "$ref": "#/definitions/model.Customer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "更新された顧客情報",
                         "schema": {
-                            "$ref": "#/definitions/example.ResetPasswordResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Password reset failed",
-                        "schema": {
-                            "$ref": "#/definitions/example.FailedResetPassword"
+                            "$ref": "#/definitions/model.Customer"
                         }
                     }
                 }
-            }
-        },
-        "/auth/send-verification-email": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+            },
+            "delete": {
+                "description": "IDで指定した顧客を削除します",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "An email will be sent to verify email.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "顧客管理"
                 ],
-                "summary": "Send verification email",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.SendVerificationEmailResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/verify-email": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Verify email",
+                "summary": "顧客削除",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The verify email token",
-                        "name": "token",
-                        "in": "query",
+                        "description": "顧客ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.VerifyEmailResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Verify email failed",
-                        "schema": {
-                            "$ref": "#/definitions/example.FailedVerifyEmail"
-                        }
+                    "204": {
+                        "description": "削除成功"
                     }
                 }
             }
         },
         "/health-check": {
             "get": {
-                "description": "Check the status of services and database connections",
+                "description": "サービスとデータベース接続の状態を確認します",
                 "consumes": [
                     "application/json"
                 ],
@@ -346,18 +244,18 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Health"
+                    "ヘルスチェック"
                 ],
-                "summary": "Health Check",
+                "summary": "ヘルスチェック",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "正常レスポンス",
                         "schema": {
                             "$ref": "#/definitions/example.HealthCheckResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "サーバーエラー",
                         "schema": {
                             "$ref": "#/definitions/example.HealthCheckResponseError"
                         }
@@ -365,136 +263,107 @@
                 }
             }
         },
-        "/users": {
+        "/reservations": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "ページング・フィルター付きで全予約を取得します",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Only admins can retrieve all users.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "予約管理"
                 ],
-                "summary": "Get all users",
+                "summary": "予約一覧取得",
                 "parameters": [
                     {
                         "type": "integer",
                         "default": 1,
-                        "description": "Page number",
+                        "description": "ページ番号",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "default": 10,
-                        "description": "Maximum number of users",
+                        "description": "ページサイズ",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search by name or email or role",
-                        "name": "search",
+                        "description": "ステータス絞り込み",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "日付絞り込み (YYYY-MM-DD)",
+                        "name": "date",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "予約一覧",
                         "schema": {
-                            "$ref": "#/definitions/example.GetAllUserResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/example.Forbidden"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "メニューとオプションを含む新しい予約を作成します",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Only admins can create other users.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "予約管理"
                 ],
-                "summary": "Create a user",
+                "summary": "新規予約作成",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
+                        "description": "予約データ",
+                        "name": "reservation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validation.CreateUser"
+                            "$ref": "#/definitions/model.Reservation"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "作成された予約情報",
                         "schema": {
-                            "$ref": "#/definitions/example.CreateUserResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/example.Forbidden"
-                        }
-                    },
-                    "409": {
-                        "description": "Email already taken",
-                        "schema": {
-                            "$ref": "#/definitions/example.DuplicateEmail"
+                            "$ref": "#/definitions/model.Reservation"
                         }
                     }
                 }
             }
         },
-        "/users/{id}": {
+        "/reservations/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "IDで指定した予約の詳細情報を関連データと共に取得します",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Logged in users can fetch only their own user information. Only admins can fetch other users.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "予約管理"
                 ],
-                "summary": "Get a user",
+                "summary": "予約詳細取得",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User id",
+                        "description": "予約ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -502,142 +371,136 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "予約詳細情報",
                         "schema": {
-                            "$ref": "#/definitions/example.GetUserResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/example.Forbidden"
-                        }
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/example.NotFound"
+                            "$ref": "#/definitions/model.Reservation"
                         }
                     }
                 }
             },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+            "put": {
+                "description": "IDで指定した予約の情報を更新します",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Logged in users can delete only themselves. Only admins can delete other users.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "予約管理"
                 ],
-                "summary": "Delete a user",
+                "summary": "予約情報更新",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/example.DeleteUserResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/example.Forbidden"
-                        }
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/example.NotFound"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logged in users can only update their own information. Only admins can update other users.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Update a user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
+                        "description": "予約ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Request body",
-                        "name": "request",
+                        "description": "更新する予約データ",
+                        "name": "reservation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validation.UpdateUser"
+                            "$ref": "#/definitions/model.Reservation"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "更新された予約情報",
                         "schema": {
-                            "$ref": "#/definitions/example.UpdateUserResponse"
+                            "$ref": "#/definitions/model.Reservation"
                         }
+                    }
+                }
+            }
+        },
+        "/reservations/{id}/cancel": {
+            "put": {
+                "description": "IDで指定した予約をキャンセルします",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "予約管理"
+                ],
+                "summary": "予約キャンセル",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "予約ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    {
+                        "description": "キャンセル理由",
+                        "name": "reason",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/example.Unauthorized"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
-                    },
-                    "403": {
-                        "description": "Forbidden",
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "キャンセル済み予約情報",
                         "schema": {
-                            "$ref": "#/definitions/example.Forbidden"
+                            "$ref": "#/definitions/model.Reservation"
                         }
+                    }
+                }
+            }
+        },
+        "/reservations/{id}/status": {
+            "patch": {
+                "description": "予約ステータスを更新します（管理者・スタッフのみ）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "予約管理"
+                ],
+                "summary": "予約ステータス更新",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "予約ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     },
-                    "404": {
-                        "description": "Not found",
+                    {
+                        "description": "ステータス更新データ",
+                        "name": "status",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/example.NotFound"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
-                    },
-                    "409": {
-                        "description": "Email already taken",
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新された予約情報",
                         "schema": {
-                            "$ref": "#/definitions/example.DuplicateEmail"
+                            "$ref": "#/definitions/model.Reservation"
                         }
                     }
                 }
@@ -645,252 +508,6 @@
         }
     },
     "definitions": {
-        "example.CreateUserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 201
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Create user successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.User"
-                }
-            }
-        },
-        "example.DeleteUserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Delete user successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "example.DuplicateEmail": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 409
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Email already taken"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.FailedLogin": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 401
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Invalid email or password"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.FailedResetPassword": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 401
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Password reset failed"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.FailedVerifyEmail": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 401
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Verify email failed"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.Forbidden": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 403
-                },
-                "message": {
-                    "type": "string",
-                    "example": "You don't have permission to access this resource"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.ForgotPasswordResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "A password reset link has been sent to your email address."
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "example.GetAllUserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "limit": {
-                    "type": "integer",
-                    "example": 10
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Get all users successfully"
-                },
-                "page": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "results": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/example.User"
-                    }
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "total_pages": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "total_results": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
-        "example.GetUserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Get user successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.User"
-                }
-            }
-        },
-        "example.GoogleLoginResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Login successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "tokens": {
-                    "$ref": "#/definitions/example.Tokens"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.GoogleUser"
-                }
-            }
-        },
-        "example.GoogleUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "fake@example.com"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "e088d183-9eea-4a11-8d5d-74d7ec91bdf5"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "fake name"
-                },
-                "role": {
-                    "type": "string",
-                    "example": "user"
-                },
-                "verified_email": {
-                    "type": "boolean",
-                    "example": true
-                }
-            }
-        },
         "example.HealthCheck": {
             "type": "object",
             "properties": {
@@ -983,372 +600,448 @@
                 }
             }
         },
-        "example.LoginResponse": {
+        "model.Customer": {
             "type": "object",
+            "required": [
+                "name",
+                "phone"
+            ],
             "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
+                "birthday": {
+                    "type": "string"
                 },
-                "message": {
-                    "type": "string",
-                    "example": "Login successfully"
+                "created_at": {
+                    "type": "string"
                 },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "tokens": {
-                    "$ref": "#/definitions/example.Tokens"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.User"
-                }
-            }
-        },
-        "example.LogoutResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Logout successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "example.NotFound": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 404
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Not found"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.RefreshToken": {
-            "type": "object",
-            "properties": {
-                "refresh_token": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg"
-                }
-            }
-        },
-        "example.RefreshTokenResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "tokens": {
-                    "$ref": "#/definitions/example.Tokens"
-                }
-            }
-        },
-        "example.RegisterResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 201
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Register successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "tokens": {
-                    "$ref": "#/definitions/example.Tokens"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.User"
-                }
-            }
-        },
-        "example.ResetPasswordResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Update password successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "example.SendVerificationEmailResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Please check your email for a link to verify your account"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "example.TokenExpires": {
-            "type": "object",
-            "properties": {
-                "expires": {
-                    "type": "string",
-                    "example": "2024-10-07T11:56:46.618180553Z"
-                },
-                "token": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg"
-                }
-            }
-        },
-        "example.Tokens": {
-            "type": "object",
-            "properties": {
-                "access": {
-                    "$ref": "#/definitions/example.TokenExpires"
-                },
-                "refresh": {
-                    "$ref": "#/definitions/example.TokenExpires"
-                }
-            }
-        },
-        "example.Unauthorized": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 401
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Please authenticate"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "error"
-                }
-            }
-        },
-        "example.UpdateUserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Update user successfully"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                },
-                "user": {
-                    "$ref": "#/definitions/example.User"
-                }
-            }
-        },
-        "example.User": {
-            "type": "object",
-            "properties": {
                 "email": {
                     "type": "string",
-                    "example": "fake@example.com"
+                    "maxLength": 255
+                },
+                "gender": {
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "other"
+                    ]
                 },
                 "id": {
-                    "type": "string",
-                    "example": "e088d183-9eea-4a11-8d5d-74d7ec91bdf5"
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string",
-                    "example": "fake name"
+                    "maxLength": 100,
+                    "minLength": 1
                 },
-                "role": {
+                "notes": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string",
-                    "example": "user"
+                    "maxLength": 20,
+                    "minLength": 10
                 },
-                "verified_email": {
-                    "type": "boolean",
-                    "example": false
+                "reservations": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Reservation"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "example.VerifyEmailResponse": {
+        "model.Menu": {
             "type": "object",
+            "required": [
+                "duration",
+                "name",
+                "price"
+            ],
             "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "message": {
+                "category": {
                     "type": "string",
-                    "example": "Verify email successfully"
+                    "maxLength": 50
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "minutes",
+                    "type": "integer",
+                    "maximum": 600,
+                    "minimum": 1
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "price": {
+                    "description": "yen",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "reservation_menus": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReservationMenu"
+                    }
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Option": {
+            "type": "object",
+            "required": [
+                "duration",
+                "name",
+                "price"
+            ],
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "additional minutes",
+                    "type": "integer",
+                    "maximum": 120,
+                    "minimum": 0
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "price": {
+                    "description": "additional yen",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "reservation_options": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReservationOption"
+                    }
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Reservation": {
+            "type": "object",
+            "required": [
+                "customer_id",
+                "end_time",
+                "reservation_date",
+                "staff_id",
+                "start_time",
+                "status"
+            ],
+            "properties": {
+                "cancellation_reason": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "customer": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    ]
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "reservation_date": {
+                    "type": "string"
+                },
+                "reservation_menus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReservationMenu"
+                    }
+                },
+                "reservation_options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReservationOption"
+                    }
+                },
+                "staff": {
+                    "$ref": "#/definitions/model.Staff"
+                },
+                "staff_id": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
                 },
                 "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "validation.CreateUser": {
-            "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password",
-                "role"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "example": "fake@example.com"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "example": "fake name"
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 8,
-                    "example": "password1"
-                },
-                "role": {
-                    "type": "string",
-                    "maxLength": 50,
                     "enum": [
-                        "user",
-                        "admin"
+                        "pending",
+                        "confirmed",
+                        "completed",
+                        "cancelled",
+                        "no_show"
                     ],
-                    "example": "user"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.ReservationStatus"
+                        }
+                    ]
+                },
+                "total_duration": {
+                    "description": "minutes",
+                    "type": "integer"
+                },
+                "total_price": {
+                    "description": "yen",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "validation.ForgotPassword": {
+        "model.ReservationMenu": {
             "type": "object",
             "required": [
-                "email"
+                "quantity"
             ],
             "properties": {
-                "email": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "example": "fake@example.com"
+                "id": {
+                    "type": "string"
+                },
+                "menu": {
+                    "$ref": "#/definitions/model.Menu"
+                },
+                "menu_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "reservation": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Reservation"
+                        }
+                    ]
+                },
+                "reservation_id": {
+                    "type": "string"
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "unit_price": {
+                    "type": "integer"
                 }
             }
         },
-        "validation.Login": {
+        "model.ReservationOption": {
+            "type": "object",
+            "required": [
+                "quantity"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "option": {
+                    "$ref": "#/definitions/model.Option"
+                },
+                "option_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "reservation": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Reservation"
+                        }
+                    ]
+                },
+                "reservation_id": {
+                    "type": "string"
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "unit_price": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ReservationStatus": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "confirmed",
+                "completed",
+                "cancelled",
+                "no_show"
+            ],
+            "x-enum-varnames": [
+                "ReservationStatusPending",
+                "ReservationStatusConfirmed",
+                "ReservationStatusCompleted",
+                "ReservationStatusCancelled",
+                "ReservationStatusNoShow"
+            ]
+        },
+        "model.Shift": {
+            "type": "object",
+            "required": [
+                "date",
+                "end_time",
+                "staff_id",
+                "start_time"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "staff": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Staff"
+                        }
+                    ]
+                },
+                "staff_id": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Staff": {
             "type": "object",
             "required": [
                 "email",
-                "password"
+                "name"
             ],
             "properties": {
-                "email": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "example": "fake@example.com"
+                "created_at": {
+                    "type": "string"
                 },
-                "password": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 8,
-                    "example": "password1"
-                }
-            }
-        },
-        "validation.Register": {
-            "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password"
-            ],
-            "properties": {
                 "email": {
                     "type": "string",
-                    "maxLength": 50,
-                    "example": "fake@example.com"
+                    "maxLength": 255
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 50,
-                    "example": "fake name"
+                    "maxLength": 100,
+                    "minLength": 1
                 },
-                "password": {
+                "phone": {
                     "type": "string",
                     "maxLength": 20,
-                    "minLength": 8,
-                    "example": "password1"
-                }
-            }
-        },
-        "validation.UpdatePassOrVerify": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 8,
-                    "example": "password1"
-                }
-            }
-        },
-        "validation.UpdateUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "example": "fake@example.com"
+                    "minLength": 10
                 },
-                "name": {
+                "position": {
                     "type": "string",
-                    "maxLength": 50,
-                    "example": "fake name"
+                    "maxLength": 50
                 },
-                "password": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 8,
-                    "example": "password1"
+                "reservations": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Reservation"
+                    }
+                },
+                "shifts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Shift"
+                    }
+                },
+                "specialties": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         }

@@ -1,413 +1,295 @@
-# RESTful API Go Fiber Boilerplate
+# 美容室予約管理システム - バックエンドAPI
 
 ![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/indrayyana/go-fiber-boilerplate)](https://goreportcard.com/report/github.com/indrayyana/go-fiber-boilerplate)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-![Repository size](https://img.shields.io/github/repo-size/indrayyana/go-fiber-boilerplate?color=56BEB8)
-![Build](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Build/badge.svg)
-![Test](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Test/badge.svg)
-![Linter](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Linter/badge.svg)
 
-A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL. Inspired by the Express boilerplate.
+美容室向けの予約管理システムのMVP（Minimum Viable Product）のバックエンドAPI。Go + Fiber + PostgreSQL + Redis構成でモバイルファースト・片手操作対応の予約システムを実現。
 
-The app comes with many built-in features, such as authentication using JWT and Google OAuth2, request validation, unit and integration tests, docker support, API documentation, pagination, etc. For more details, check the features list below.
+## 特徴
 
-## Quick Start
+- **予約管理**: 顧客・スタッフ・メニュー・予約の包括的管理
+- **空き時間検索**: 高性能な空き時間検索アルゴリズム
+- **監査機能**: 全操作の監査ログ記録
+- **セキュリティ**: JWT認証・UUID主キー・暗号化対応
+- **高性能**: PostgreSQL + Redis キャッシュ構成
+- **TDD採用**: テストファースト開発による高品質実装
 
-To create a project, simply run:
+## クイックスタート
 
 ```bash
-go mod init <project-name>
+# プロジェクトルートから開発環境起動
+cd /Users/sakana/Documents/GitHub/beauty-slot-aiad
+make dev
+
+# バックエンドのみ起動する場合
+cd backend
+go mod tidy
+go run cmd/server/main.go
 ```
 
-## Manual Installation
+**アクセスURL**:
+- API: http://localhost:8080
+- API仕様書: http://localhost:8080/v1/docs/
+- pgAdmin: http://localhost:5050
 
-If you would still prefer to do the installation manually, follow these steps:
+## 目次
 
-Clone the repo:
+- [API エンドポイント](#api-エンドポイント)
+- [開発コマンド](#開発コマンド)
+- [環境変数](#環境変数)
+- [プロジェクト構成](#プロジェクト構成)
+- [テスト](#テスト)
+- [データベース](#データベース)
+- [認証・認可](#認証認可)
 
+## API エンドポイント
+
+### 予約管理
+- `GET /api/v1/reservations` - 予約一覧取得
+- `POST /api/v1/reservations` - 新規予約作成
+- `GET /api/v1/reservations/:id` - 予約詳細取得
+- `PUT /api/v1/reservations/:id` - 予約更新
+- `DELETE /api/v1/reservations/:id` - 予約削除
+
+### 顧客管理
+- `GET /api/v1/customers` - 顧客一覧取得
+- `POST /api/v1/customers` - 新規顧客登録
+- `GET /api/v1/customers/:id` - 顧客詳細取得
+- `PUT /api/v1/customers/:id` - 顧客情報更新
+
+### スタッフ管理
+- `GET /api/v1/staff` - スタッフ一覧取得
+- `POST /api/v1/staff` - 新規スタッフ登録
+- `GET /api/v1/staff/:id` - スタッフ詳細取得
+- `PUT /api/v1/staff/:id` - スタッフ情報更新
+
+### メニュー管理
+- `GET /api/v1/menus` - メニュー一覧取得
+- `POST /api/v1/menus` - 新規メニュー登録
+- `GET /api/v1/menus/:id` - メニュー詳細取得
+- `PUT /api/v1/menus/:id` - メニュー更新
+
+### 空き時間検索
+- `GET /api/v1/availability` - 空き時間検索
+  - クエリパラメータ: `date`, `staff_id`, `menu_id`
+
+### シフト管理
+- `GET /api/v1/shifts` - シフト一覧取得
+- `POST /api/v1/shifts` - 新規シフト登録
+- `PUT /api/v1/shifts/:id` - シフト更新
+
+## 開発コマンド
+
+### 基本操作
 ```bash
-git clone --depth 1 https://github.com/indrayyana/go-fiber-boilerplate.git
-cd go-fiber-boilerplate
-rm -rf ./.git
-```
+# サーバー起動
+go run cmd/server/main.go
 
-Install the dependencies:
+# ライブリロード（要Air）
+air
 
-```bash
+# 依存関係更新
 go mod tidy
 ```
 
-Set the environment variables:
-
+### テスト（TDD）
 ```bash
-cp .env.example .env
+# 全テスト実行
+go test ./...
 
-# open .env and modify the environment variables (if needed)
+# テストカバレッジ
+go test -cover ./...
+
+# 特定テスト実行
+go test -run TestReservationHandler ./internal/handlers
+
+# TDDサイクル（プロジェクトルートから）
+make test
+make tdd
+make coverage
 ```
 
-## Table of Contents
-
-- [Features](#features)
-- [Commands](#commands)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Validation](#validation)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Logging](#logging)
-- [Linting](#linting)
-- [Contributing](#contributing)
-
-## Features
-
-- **SQL database**: [PostgreSQL](https://www.postgresql.org) Object Relation Mapping using [Gorm](https://gorm.io)
-- **Database migrations**: with [golang-migrate](https://github.com/golang-migrate/migrate)
-- **Validation**: request data validation using [Package validator](https://github.com/go-playground/validator)
-- **Logging**: using [Logrus](https://github.com/sirupsen/logrus) and [Fiber-Logger](https://docs.gofiber.io/api/middleware/logger)
-- **Testing**: unit and integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
-- **Error handling**: centralized error handling mechanism
-- **API documentation**: with [Swag](https://github.com/swaggo/swag) and [Swagger](https://github.com/gofiber/swagger)
-- **Sending email**: using [Gomail](https://github.com/go-gomail/gomail)
-- **Environment variables**: using [Viper](https://github.com/spf13/viper)
-- **Security**: set security HTTP headers using [Fiber-Helmet](https://docs.gofiber.io/api/middleware/helmet)
-- **CORS**: Cross-Origin Resource-Sharing enabled using [Fiber-CORS](https://docs.gofiber.io/api/middleware/cors)
-- **Compression**: gzip compression with [Fiber-Compress](https://docs.gofiber.io/api/middleware/compress)
-- **Docker support**
-- **Linting**: with [golangci-lint](https://golangci-lint.run)
-
-## Commands
-
-Running locally:
-
+### 品質管理
 ```bash
-make start
+# リント実行
+golangci-lint run
+
+# API仕様書生成
+swag init -g cmd/server/main.go -o docs
 ```
 
-Or running with live reload:
-
+### データベース
 ```bash
-air
+# マイグレーション実行（プロジェクトルートから）
+make db-reset
+
+# 手動マイグレーション（要golang-migrate）
+migrate -path database/migrations -database "postgres://user:pass@localhost:5432/dbname?sslmode=disable" up
 ```
 
-> [!NOTE]
-> Make sure you have `Air` installed.\
-> See 👉 [How to install Air](https://github.com/air-verse/air)
+## 環境変数
 
-Testing:
+美容室予約システム用の環境変数設定:
 
 ```bash
-# run all tests
-make tests
-
-# run all tests with gotestsum format
-make testsum
-
-# run test for the selected function name
-make tests-TestUserModel
-```
-
-Docker:
-
-```bash
-# run docker container
-make docker
-
-# run all tests in a docker container
-make docker-test
-```
-
-Linting:
-
-```bash
-# run lint
-make lint
-```
-
-Swagger:
-
-```bash
-# generate the swagger documentation
-make swagger
-```
-
-Migration:
-
-```bash
-# Create migration
-make migration-<table-name>
-
-# Example for table users
-make migration-users
-```
-
-```bash
-# run migration up in local
-make migrate-up
-
-# run migration down in local
-make migrate-down
-
-# run migration up in docker container
-make migrate-docker-up
-
-# run migration down all in docker container
-make migrate-docker-down
-```
-
-## Environment Variables
-
-The environment variables can be found and modified in the `.env` file. They come with these default values:
-
-```bash
-# server configuration
-# Env value : prod || dev
+# サーバー設定
 APP_ENV=dev
 APP_HOST=0.0.0.0
-APP_PORT=3000
+APP_PORT=8080
 
-# database configuration
-DB_HOST=postgresdb
+# データベース設定（PostgreSQL）
+DB_HOST=localhost
 DB_USER=postgres
-DB_PASSWORD=thisisasamplepassword
-DB_NAME=fiberdb
+DB_PASSWORD=postgres
+DB_NAME=beauty_salon
 DB_PORT=5432
 
-# JWT
-# JWT secret key
-JWT_SECRET=thisisasamplesecret
-# Number of minutes after which an access token expires
+# キャッシュ設定（Redis）
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# JWT認証
+JWT_SECRET=beauty-salon-secret-key
 JWT_ACCESS_EXP_MINUTES=30
-# Number of days after which a refresh token expires
-JWT_REFRESH_EXP_DAYS=30
-# Number of minutes after which a reset password token expires
-JWT_RESET_PASSWORD_EXP_MINUTES=10
-# Number of minutes after which a verify email token expires
-JWT_VERIFY_EMAIL_EXP_MINUTES=10
+JWT_REFRESH_EXP_DAYS=7
 
-# SMTP configuration options for the email service
-SMTP_HOST=email-server
+# 通知設定（将来実装）
+SMTP_HOST=
 SMTP_PORT=587
-SMTP_USERNAME=email-server-username
-SMTP_PASSWORD=email-server-password
-EMAIL_FROM=support@yourapp.com
-
-# OAuth2 configuration
-GOOGLE_CLIENT_ID=yourapps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=thisisasamplesecret
-REDIRECT_URL=http://localhost:3000/v1/auth/google-callback
+SMTP_USERNAME=
+SMTP_PASSWORD=
+EMAIL_FROM=noreply@beauty-salon.local
 ```
 
-## Project Structure
+## プロジェクト構成
 
 ```
-src\
- |--config\         # Environment variables and configuration related things
- |--controller\     # Route controllers (controller layer)
- |--database\       # Database connection & migrations
- |--docs\           # Swagger files
- |--middleware\     # Custom fiber middlewares
- |--model\          # Postgres models (data layer)
- |--response\       # Response models
- |--router\         # Routes
- |--service\        # Business logic (service layer)
- |--utils\          # Utility classes and functions
- |--validation\     # Request data validation schemas
- |--main.go         # Fiber app
+backend/
+├── cmd/server/main.go          # エントリーポイント
+├── internal/                   # アプリケーションロジック
+│   ├── config/                # 設定管理
+│   ├── handlers/              # HTTPハンドラー（コントローラー層）
+│   ├── models/                # データモデル（データ層）
+│   ├── services/              # ビジネスロジック（サービス層）
+│   ├── middleware/            # カスタムミドルウェア
+│   ├── utils/                 # ユーティリティ
+│   └── validation/            # バリデーション
+├── docs/                      # Swagger API仕様書
+├── tests/                     # テストファイル
+├── go.mod                     # Go依存関係
+└── Dockerfile                 # コンテナ設定
 ```
 
-## API Documentation
+### 主要コンポーネント
+- **handlers**: REST APIエンドポイントの実装
+- **models**: データベースモデル（GORM）
+- **services**: 予約管理・空き時間検索等のビジネスロジック
+- **middleware**: 認証・ログ・CORS等のミドルウェア
 
-To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser.
+## テスト
 
-![Auth](https://indrayyana.github.io/assets/images/swagger1.png)
-![User](https://indrayyana.github.io/assets/images/swagger2.png)
+### TDD（Test-Driven Development）採用
 
-This documentation page is automatically generated using the [Swag](https://github.com/swaggo/swag) definitions written as comments in the controller files.
+**t-wada氏の知見を基盤とした厳格なTDD実践**
 
-See 👉 [Declarative Comments Format.](https://github.com/swaggo/swag#declarative-comments-format)
-
-## API Endpoints
-
-List of available routes:
-
-**Auth routes**:\
-`POST /v1/auth/register` - register\
-`POST /v1/auth/login` - login\
-`POST /v1/auth/logout` - logout\
-`POST /v1/auth/refresh-tokens` - refresh auth tokens\
-`POST /v1/auth/forgot-password` - send reset password email\
-`POST /v1/auth/reset-password` - reset password\
-`POST /v1/auth/send-verification-email` - send verification email\
-`POST /v1/auth/verify-email` - verify email\
-`GET /v1/auth/google` - login with google account
-
-**User routes**:\
-`POST /v1/users` - create a user\
-`GET /v1/users` - get all users\
-`GET /v1/users/:userId` - get user\
-`PATCH /v1/users/:userId` - update user\
-`DELETE /v1/users/:userId` - delete user
-
-## Error Handling
-
-The app includes a custom error handling mechanism, which can be found in the `src/utils/error.go` file.
-
-It also utilizes the `Fiber-Recover` middleware to gracefully recover from any panic that might occur in the handler stack, preventing the app from crashing unexpectedly.
-
-The error handling process sends an error response in the following format:
-
-```json
-{
-  "code": 404,
-  "status": "error",
-  "message": "Not found"
-}
+```bash
+# Red-Green-Refactorサイクル
+1. Red: 失敗するテストを先に書く
+2. Green: 最小限のコードでテストを通す
+3. Refactor: コード品質向上と重複排除
 ```
 
-Fiber provides a custom error struct using `fiber.NewError()`, where you can specify a response code and a message. This error can then be returned from any part of your code, and Fiber's `ErrorHandler` will automatically catch it.
+### テスト実行
+```bash
+# 全テスト実行
+go test ./...
 
-For example, if you are trying to retrieve a user from the database but the user is not found, and you want to return a 404 error, the code might look like this:
+# テストカバレッジ
+go test -cover ./...
 
+# 継続的テスト実行（プロジェクトルートから）
+make tdd
+```
+
+### テスト構成
+- **ユニットテスト**: handlers, services, models
+- **統合テスト**: API エンドポイント
+- **テストデータ**: テスト用データベース使用
+
+## データベース
+
+### スキーマ設計
+
+**9テーブル + 関連テーブル構成**
+
+- **customers**: 顧客情報（UUID主キー）
+- **staff**: スタッフ情報・スキル管理
+- **menus**: メニュー・料金・所要時間
+- **options**: オプションメニュー
+- **labels**: 分類ラベル（カテゴリ、タグ等）
+- **shifts**: スタッフシフト・勤務時間
+- **reservations**: 予約情報・ステータス管理
+- **reservation_options**: 予約オプション関連
+- **audit_logs**: 操作監査ログ（パーティション対応）
+- **notification_logs**: 通知履歴
+
+### セキュリティ
+- **UUID主キー**: セキュリティ強化
+- **バリデーション制約**: データ整合性保証
+- **監査ログ**: 全CRUD操作の自動記録
+- **暗号化**: 顧客個人情報（AES-256）
+
+### マイグレーション
+```bash
+# データベースリセット（プロジェクトルートから）
+make db-reset
+
+# マイグレーションファイル場所
+database/migrations/
+├── 001_create_tables.sql
+├── 002_create_indexes.sql
+└── 003_insert_seed_data.sql
+```
+
+## 認証・認可
+
+### JWT認証
 ```go
-func (s *userService) GetUserByID(c *fiber.Ctx, id string) {
-	user := new(model.User)
-
-	err := s.DB.WithContext(c.Context()).First(user, "id = ?", id).Error
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return fiber.NewError(fiber.StatusNotFound, "User not found")
-	}
-}
+// 認証が必要なルートでの使用例
+app.Post("/api/v1/reservations", middleware.Auth(), handlers.CreateReservation)
 ```
 
-## Validation
+### 認証フロー
+1. **顧客認証**: 電話番号・SMS認証（MVP）
+2. **スタッフ認証**: メールアドレス・パスワード
+3. **管理者認証**: 管理者専用ログイン
 
-Request data is validated using [Package validator](https://github.com/go-playground/validator). Check the [documentation](https://pkg.go.dev/github.com/go-playground/validator/v10) for more details on how to write validations.
+### 権限管理
+- **顧客**: 自分の予約のみ閲覧・操作可能
+- **スタッフ**: 担当予約の閲覧・更新可能
+- **管理者**: 全データの閲覧・操作可能
 
-The validation schemas are defined in the `src/validation` directory and are used within the services by passing them to the validation logic. In this example, the CreateUser method in the userService uses the `validation.CreateUser` schema to validate incoming request data before processing it. The validation is handled by the `Validate.Struct` method, which checks the request data against the schema.
+---
 
-```go
-import (
-	"app/src/model"
-	"app/src/validation"
+## 開発状況
 
-	"github.com/gofiber/fiber/v2"
-)
+### ✅ 完了
+- Docker開発環境構築
+- データベース設計・マイグレーション
+- API サーバー基盤（Go/Fiber）
+- TDD環境構築
 
-func (s *userService) CreateUser(c *fiber.Ctx, req validation.CreateUser) (*model.User, error) {
-	if err := s.Validate.Struct(&req); err != nil {
-		return nil, err
-	}
-}
-```
+### 🔄 実装中
+- APIハンドラー実装（テストファースト）
+- 空き時間検索アルゴリズム
+- CRUD操作完全実装
 
-## Authentication
+### 📋 予定
+- 認証システム実装
+- 通知機能（メール・SMS）
+- フロントエンド連携
 
-To require authentication for certain routes, you can use the `Auth` middleware.
+---
 
-```go
-import (
-	"app/src/controllers"
-	m "app/src/middleware"
-	"app/src/services"
-
-	"github.com/gofiber/fiber/v2"
-)
-
-func SetupRoutes(app *fiber.App, u services.UserService, t services.TokenService) {
-  userController := controllers.NewUserController(u, t)
-	app.Post("/users", m.Auth(u), userController.CreateUser)
-}
-```
-
-These routes require a valid JWT access token in the Authorization request header using the Bearer schema. If the request does not contain a valid access token, an Unauthorized (401) error is thrown.
-
-**Generating Access Tokens**:
-
-An access token can be generated by making a successful call to the register (`POST /v1/auth/register`) or login (`POST /v1/auth/login`) endpoints. The response of these endpoints also contains refresh tokens (explained below).
-
-An access token is valid for 30 minutes. You can modify this expiration time by changing the `JWT_ACCESS_EXP_MINUTES` environment variable in the .env file.
-
-**Refreshing Access Tokens**:
-
-After the access token expires, a new access token can be generated, by making a call to the refresh token endpoint (`POST /v1/auth/refresh-tokens`) and sending along a valid refresh token in the request body. This call returns a new access token and a new refresh token.
-
-A refresh token is valid for 30 days. You can modify this expiration time by changing the `JWT_REFRESH_EXP_DAYS` environment variable in the .env file.
-
-## Authorization
-
-The `Auth` middleware can also be used to require certain rights/permissions to access a route.
-
-```go
-import (
-	"app/src/controllers"
-	m "app/src/middleware"
-	"app/src/services"
-
-	"github.com/gofiber/fiber/v2"
-)
-
-func SetupRoutes(app *fiber.App, u services.UserService, t services.TokenService) {
-  userController := controllers.NewUserController(u, t)
-	app.Post("/users", m.Auth(u, "manageUsers"), userController.CreateUser)
-}
-```
-
-In the example above, an authenticated user can access this route only if that user has the `manageUsers` permission.
-
-The permissions are role-based. You can view the permissions/rights of each role in the `src/config/roles.go` file.
-
-If the user making the request does not have the required permissions to access this route, a Forbidden (403) error is thrown.
-
-## Logging
-
-Import the logger from `src/utils/logrus.go`. It is using the [Logrus](https://github.com/sirupsen/logrus) logging library.
-
-Logging should be done according to the following severity levels (ascending order from most important to least important):
-
-```go
-import "app/src/utils"
-
-utils.Log.Panic('message') // Calls panic() after logging
-utils.Log.Fatal('message'); // Calls os.Exit(1) after logging
-utils.Log.Error('message');
-utils.Log.Warn('message');
-utils.Log.Info('message');
-utils.Log.Debug('message');
-utils.Log.Trace('message');
-```
-
-> [!NOTE]
-> API request information (request url, response code, timestamp, etc.) are also automatically logged (using [Fiber-Logger](https://docs.gofiber.io/api/middleware/logger)).
-
-## Linting
-
-Linting is done using [golangci-lint](https://golangci-lint.run)
-
-See 👉 [How to install golangci-lint](https://golangci-lint.run/welcome/install)
-
-To modify the golangci-lint configuration, update the `.golangci.yml` file.
-
-## Contributing
-
-Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
-
-If you find this boilerplate useful, consider giving it a star! ⭐
-
-## Inspirations
-
-- [hagopj13/node-express-boilerplate](https://github.com/hagopj13/node-express-boilerplate)
-- [khannedy/golang-clean-architecture](https://github.com/khannedy/golang-clean-architecture)
-- [zexoverz/express-prisma-template](https://github.com/zexoverz/express-prisma-template)
-
-## License
-
-[MIT](LICENSE)
-
-## Contributors
-
-[![Contributors](https://contrib.rocks/image?c=6&repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
+**参考**: [go-fiber-boilerplate](https://github.com/indrayyana/go-fiber-boilerplate)をベースに美容室予約システム向けにカスタマイズ
